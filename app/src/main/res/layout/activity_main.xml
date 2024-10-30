@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity">
+
+    <!-- Текстовое поле для отображения заголовка -->
+    <TextView
+        android:id="@+id/titleTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Калькулятор цены автомобиля"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:paddingBottom="16dp"/>
+
+    <!-- CheckBox для выбора опций -->
+    <CheckBox
+        android:id="@+id/checkBoxLeatherSeats"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Кожаный салон (+1000)"
+        app:layout_constraintTop_toBottomOf="@id/titleTextView"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <CheckBox
+        android:id="@+id/checkBoxAirbags"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Дополнительные подушки безопасности (+500)"
+        app:layout_constraintTop_toBottomOf="@id/checkBoxLeatherSeats"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <CheckBox
+        android:id="@+id/checkBoxNavigation"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Система навигации (+700)"
+        app:layout_constraintTop_toBottomOf="@id/checkBoxAirbags"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Кнопка для расчета стоимости -->
+    <Button
+        android:id="@+id/calculateButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Рассчитать цену"
+        app:layout_constraintTop_toBottomOf="@id/checkBoxNavigation"
+        app:layout_constraintStart_toStartOf="parent"
+        android:paddingTop="16dp"/>
+
+    <!-- Поле для отображения итоговой цены -->
+    <TextView
+        android:id="@+id/resultTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Итоговая цена: "
+        android:textSize="18sp"
+        app:layout_constraintTop_toBottomOf="@id/calculateButton"
+        app:layout_constraintStart_toStartOf="parent"
+        android:paddingTop="16dp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
