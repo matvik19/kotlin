@@ -1,62 +1,96 @@
 package com.example.myapplication
 
+import android.content.Intent
 import android.os.Bundle
 import android.widget.Button
 import android.widget.CheckBox
 import android.widget.TextView
-import androidx.activity.enableEdgeToEdge
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import java.io.File
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var checkBoxLeatherSeats: CheckBox
-    private lateinit var checkBoxAirbags: CheckBox
-    private lateinit var checkBoxNavigation: CheckBox
-    private lateinit var resultTextView: TextView
-    private lateinit var calculateButton: Button
-    private val basePrice = 900000 // базовая цена автомобиля
+    private val historyFileName = "history.txt"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         setContentView(R.layout.activity_main)
 
-        // Настройка окна и отступов
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+        // Поля для работы с элементами интерфейса
+        val basePrice = 100000 // Базовая цена автомобиля
+        val checkBoxLeatherSeats = findViewById<CheckBox>(R.id.checkBoxLeatherSeats)
+        val checkBoxAirbags = findViewById<CheckBox>(R.id.checkBoxAirbags)
+        val checkBoxNavigation = findViewById<CheckBox>(R.id.checkBoxNavigation)
+        val calculateButton = findViewById<Button>(R.id.calculateButton)
+        val resultTextView = findViewById<TextView>(R.id.resultTextView)
+        val historyTextView = findViewById<TextView>(R.id.historyTextView)
+        val clearHistoryButton = findViewById<Button>(R.id.clearHistoryButton)
+
+        // Загрузка истории расчетов при запуске
+        loadHistory(historyTextView)
+
+        // Обработчик кнопки "Рассчитать цену"
+        calculateButton.setOnClickListener {
+            var totalPrice = basePrice
+
+            // Добавляем стоимость опций, если они выбраны
+            if (checkBoxLeatherSeats.isChecked) totalPrice += 1000
+            if (checkBoxAirbags.isChecked) totalPrice += 500
+            if (checkBoxNavigation.isChecked) totalPrice += 700
+
+            // Отображаем итоговую цену
+            val result = "Итоговая цена: $totalPrice"
+            resultTextView.text = result
+
+            // Записываем результат в файл и обновляем историю
+            saveResultToFile(result)
+            loadHistory(historyTextView)
         }
 
-        // Инициализация элементов управления
-        checkBoxLeatherSeats = findViewById(R.id.checkBoxLeatherSeats)
-        checkBoxAirbags = findViewById(R.id.checkBoxAirbags)
-        checkBoxNavigation = findViewById(R.id.checkBoxNavigation)
-        resultTextView = findViewById(R.id.resultTextView)
-        calculateButton = findViewById(R.id.calculateButton)
+        // Обработчик кнопки "Очистить историю"
+        clearHistoryButton.setOnClickListener {
+            clearHistory()
+            historyTextView.text = "История расчетов:"
+            Toast.makeText(this, "История очищена", Toast.LENGTH_SHORT).show()
+        }
 
-        // Обработчик для кнопки "Рассчитать цену"
-        calculateButton.setOnClickListener {
-            calculatePrice()
+        // Переход в AnimationActivity
+        val animationButton: Button = findViewById(R.id.buttonOpenAnimation)
+        animationButton.setOnClickListener {
+            val intent = Intent(this, AnimationActivity::class.java)
+            startActivity(intent)
+        }
+
+        val btnDatabase = findViewById<Button>(R.id.btnDatabase)
+        btnDatabase.setOnClickListener {
+            val intent = Intent(this, DatabaseActivity::class.java)
+            startActivity(intent)
         }
     }
 
-    // Метод для расчета цены автомобиля
-    private fun calculatePrice() {
-        var finalPrice = basePrice
+    // Сохранение результата в файл
+    private fun saveResultToFile(result: String) {
+        val file = File(filesDir, historyFileName)
+        file.appendText("$result\n")
+    }
 
-        if (checkBoxLeatherSeats.isChecked) {
-            finalPrice += 1000
+    // Загрузка истории расчетов из файла
+    private fun loadHistory(historyTextView: TextView) {
+        val file = File(filesDir, historyFileName)
+        if (file.exists()) {
+            val history = file.readText()
+            historyTextView.text = "История расчетов:\n$history"
+        } else {
+            historyTextView.text = "История расчетов:"
         }
-        if (checkBoxAirbags.isChecked) {
-            finalPrice += 500
-        }
-        if (checkBoxNavigation.isChecked) {
-            finalPrice += 700
-        }
+    }
 
-        resultTextView.text = "Итоговая цена: $finalPrice Руб."
+    // Очистка истории расчетов
+    private fun clearHistory() {
+        val file = File(filesDir, historyFileName)
+        if (file.exists()) {
+            file.delete()
+        }
     }
 }
